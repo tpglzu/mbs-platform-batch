@@ -74,12 +74,51 @@
 			<groupId>backtype</groupId>
 			<artifactId>dfs-datastores-cascading</artifactId>
 			<version>1.2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-hadoop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>riffle</groupId>
+			<artifactId>riffle</artifactId>
+			<version>0.1-dev</version>
+		</dependency>
+
+		<dependency>
+			<groupId>thirdparty</groupId>
+			<artifactId>jgrapht-jdk1.6</artifactId>
+			<version>0.8.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.codehaus.janino/janino -->
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>2.5.16</version>
 		</dependency>
 
 		<dependency>
 			<groupId>cascalog</groupId>
 			<artifactId>cascalog</artifactId>
 			<version>1.10.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-hadoop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -96,6 +135,14 @@
 				<exclusion>
 					<artifactId>libthrift</artifactId>
 					<groupId>org.apache.thrift</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-hadoop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>cascading</groupId>
+					<artifactId>cascading-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

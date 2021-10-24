@@ -158,10 +158,9 @@
     <orderEntry type="library" name="Maven: backtype:dfs-datastores-cascading:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: backtype:dfs-datastores:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: jvyaml:jvyaml:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: cascading:cascading-hadoop:2.0.0" level="project" />
-    <orderEntry type="library" name="Maven: cascading:cascading-core:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: riffle:riffle:0.1-dev" level="project" />
     <orderEntry type="library" name="Maven: thirdparty:jgrapht-jdk1.6:0.8.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.janino:janino:2.5.16" level="project" />
     <orderEntry type="library" name="Maven: cascalog:cascalog:1.10.0" level="project" />
     <orderEntry type="library" name="Maven: org.clojure:tools.macro:0.1.1" level="project" />
     <orderEntry type="library" name="Maven: cascading.kryo:cascading.kryo:0.4.0" level="project" />

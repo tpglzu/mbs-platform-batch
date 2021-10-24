@@ -144,12 +144,11 @@ com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
 |  +- org.springframework:spring-test:jar:5.3.9:test
 |  \- org.xmlunit:xmlunit-core:jar:2.8.2:test
 +- backtype:dfs-datastores-cascading:jar:1.2.0:compile
-|  +- backtype:dfs-datastores:jar:1.1.0:compile
-|  |  \- jvyaml:jvyaml:jar:1.0.0:compile
-|  \- cascading:cascading-hadoop:jar:2.0.0:compile
-|     \- cascading:cascading-core:jar:2.0.0:compile
-|        +- riffle:riffle:jar:0.1-dev:compile
-|        \- thirdparty:jgrapht-jdk1.6:jar:0.8.1:compile
+|  \- backtype:dfs-datastores:jar:1.1.0:compile
+|     \- jvyaml:jvyaml:jar:1.0.0:compile
++- riffle:riffle:jar:0.1-dev:compile
++- thirdparty:jgrapht-jdk1.6:jar:0.8.1:compile
++- org.codehaus.janino:janino:jar:2.5.16:compile
 +- cascalog:cascalog:jar:1.10.0:compile
 |  +- org.clojure:tools.macro:jar:0.1.1:compile
 |  +- cascading.kryo:cascading.kryo:jar:0.4.0:compile
