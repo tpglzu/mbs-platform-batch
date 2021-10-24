@@ -1,0 +1,175 @@
+com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
++- org.springframework.boot:spring-boot-starter-web:jar:2.5.4:compile
+|  +- org.springframework.boot:spring-boot-starter:jar:2.5.4:compile
+|  |  +- org.springframework.boot:spring-boot:jar:2.5.4:compile
+|  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.5.4:compile
+|  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.5.4:compile
+|  |  |  +- ch.qos.logback:logback-classic:jar:1.2.5:compile
+|  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.5:compile
+|  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.14.1:compile
+|  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.14.1:compile
+|  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.32:compile
+|  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+|  |  \- org.yaml:snakeyaml:jar:1.28:compile
+|  +- org.springframework.boot:spring-boot-starter-json:jar:2.5.4:compile
+|  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.12.4:compile
+|  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.12.4:compile
+|  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.12.4:compile
+|  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.12.4:compile
+|  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.12.4:compile
+|  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.12.4:compile
+|  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.5.4:compile
+|  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.52:compile
+|  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.52:compile
+|  +- org.springframework:spring-web:jar:5.3.9:compile
+|  |  \- org.springframework:spring-beans:jar:5.3.9:compile
+|  \- org.springframework:spring-webmvc:jar:5.3.9:compile
+|     +- org.springframework:spring-aop:jar:5.3.9:compile
+|     +- org.springframework:spring-context:jar:5.3.9:compile
+|     \- org.springframework:spring-expression:jar:5.3.9:compile
++- org.apache.thrift:libthrift:jar:0.14.2:compile
+|  +- org.slf4j:slf4j-api:jar:1.7.32:compile
+|  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+|  +- org.apache.httpcomponents:httpcore:jar:4.4.14:compile
+|  +- org.apache.tomcat.embed:tomcat-embed-core:jar:9.0.52:compile
+|  |  \- org.apache.tomcat:tomcat-annotations-api:jar:9.0.52:compile
+|  \- javax.annotation:javax.annotation-api:jar:1.3.2:compile
++- org.apache.hadoop:hadoop-client:jar:2.8.0:compile
+|  +- org.apache.hadoop:hadoop-mapreduce-client-app:jar:2.8.0:compile
+|  |  +- org.apache.hadoop:hadoop-mapreduce-client-common:jar:2.8.0:compile
+|  |  |  +- org.apache.hadoop:hadoop-yarn-client:jar:2.8.0:compile
+|  |  |  \- org.apache.hadoop:hadoop-yarn-server-common:jar:2.8.0:compile
+|  |  \- org.apache.hadoop:hadoop-mapreduce-client-shuffle:jar:2.8.0:compile
+|  +- org.apache.hadoop:hadoop-yarn-api:jar:2.8.0:compile
+|  +- org.apache.hadoop:hadoop-mapreduce-client-core:jar:2.8.0:compile
+|  |  \- org.apache.hadoop:hadoop-yarn-common:jar:2.8.0:compile
+|  |     +- javax.xml.bind:jaxb-api:jar:2.3.1:compile
+|  |     |  \- javax.activation:javax.activation-api:jar:1.2.0:compile
+|  |     \- com.sun.jersey:jersey-client:jar:1.9:compile
+|  +- org.apache.hadoop:hadoop-mapreduce-client-jobclient:jar:2.8.0:compile
+|  \- org.apache.hadoop:hadoop-annotations:jar:2.8.0:compile
++- org.apache.hadoop:hadoop-common:jar:2.8.0:compile
+|  +- com.google.guava:guava:jar:11.0.2:compile
+|  +- commons-cli:commons-cli:jar:1.2:compile
+|  +- org.apache.commons:commons-math3:jar:3.1.1:compile
+|  +- xmlenc:xmlenc:jar:0.52:compile
+|  +- commons-codec:commons-codec:jar:1.15:compile
+|  +- commons-io:commons-io:jar:2.4:compile
+|  +- commons-net:commons-net:jar:3.1:compile
+|  +- commons-collections:commons-collections:jar:3.2.2:compile
+|  +- javax.servlet:servlet-api:jar:2.5:compile
+|  +- org.mortbay.jetty:jetty:jar:6.1.26:compile
+|  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+|  +- org.mortbay.jetty:jetty-sslengine:jar:6.1.26:compile
+|  +- javax.servlet.jsp:jsp-api:jar:2.1:runtime
+|  +- com.sun.jersey:jersey-core:jar:1.9:compile
+|  +- com.sun.jersey:jersey-json:jar:1.9:compile
+|  |  +- org.codehaus.jettison:jettison:jar:1.1:compile
+|  |  +- com.sun.xml.bind:jaxb-impl:jar:2.2.3-1:compile
+|  |  +- org.codehaus.jackson:jackson-jaxrs:jar:1.8.3:compile
+|  |  \- org.codehaus.jackson:jackson-xc:jar:1.8.3:compile
+|  +- com.sun.jersey:jersey-server:jar:1.9:compile
+|  |  \- asm:asm:jar:3.1:compile
+|  +- commons-logging:commons-logging:jar:1.1.3:compile
+|  +- log4j:log4j:jar:1.2.17:compile
+|  +- net.java.dev.jets3t:jets3t:jar:0.9.0:compile
+|  |  \- com.jamesmurty.utils:java-xmlbuilder:jar:0.4:compile
+|  +- commons-lang:commons-lang:jar:2.6:compile
+|  +- commons-configuration:commons-configuration:jar:1.6:compile
+|  |  +- commons-digester:commons-digester:jar:1.8:compile
+|  |  |  \- commons-beanutils:commons-beanutils:jar:1.7.0:compile
+|  |  \- commons-beanutils:commons-beanutils-core:jar:1.8.0:compile
+|  +- org.slf4j:slf4j-log4j12:jar:1.7.32:compile
+|  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+|  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+|  +- org.apache.avro:avro:jar:1.7.4:compile
+|  |  +- com.thoughtworks.paranamer:paranamer:jar:2.3:compile
+|  |  \- org.xerial.snappy:snappy-java:jar:1.0.4.1:compile
+|  +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+|  +- com.google.code.gson:gson:jar:2.8.7:compile
+|  +- org.apache.hadoop:hadoop-auth:jar:2.8.0:compile
+|  |  +- com.nimbusds:nimbus-jose-jwt:jar:9.10.1:compile
+|  |  |  \- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+|  |  +- org.apache.directory.server:apacheds-kerberos-codec:jar:2.0.0-M15:compile
+|  |  |  +- org.apache.directory.server:apacheds-i18n:jar:2.0.0-M15:compile
+|  |  |  +- org.apache.directory.api:api-asn1-api:jar:1.0.0-M20:compile
+|  |  |  \- org.apache.directory.api:api-util:jar:1.0.0-M20:compile
+|  |  \- org.apache.curator:curator-framework:jar:2.7.1:compile
+|  +- com.jcraft:jsch:jar:0.1.51:compile
+|  +- org.apache.curator:curator-client:jar:2.7.1:compile
+|  +- org.apache.curator:curator-recipes:jar:2.7.1:compile
+|  +- com.google.code.findbugs:jsr305:jar:3.0.0:compile
+|  +- org.apache.htrace:htrace-core4:jar:4.0.1-incubating:compile
+|  +- org.apache.zookeeper:zookeeper:jar:3.4.6:compile
+|  \- org.apache.commons:commons-compress:jar:1.4.1:compile
+|     \- org.tukaani:xz:jar:1.0:compile
++- org.apache.hadoop:hadoop-hdfs:jar:2.8.0:compile
+|  +- org.apache.hadoop:hadoop-hdfs-client:jar:2.8.0:compile
+|  |  \- com.squareup.okhttp:okhttp:jar:2.4.0:compile
+|  |     \- com.squareup.okio:okio:jar:1.4.0:compile
+|  +- commons-daemon:commons-daemon:jar:1.0.13:compile
+|  +- io.netty:netty:jar:3.6.2.Final:compile
+|  +- io.netty:netty-all:jar:4.1.67.Final:compile
+|  +- xerces:xercesImpl:jar:2.9.1:compile
+|  |  \- xml-apis:xml-apis:jar:1.3.04:compile
+|  \- org.fusesource.leveldbjni:leveldbjni-all:jar:1.8:compile
++- org.springframework.boot:spring-boot-starter-test:jar:2.5.4:test
+|  +- org.springframework.boot:spring-boot-test:jar:2.5.4:test
+|  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.5.4:test
+|  +- com.jayway.jsonpath:json-path:jar:2.5.0:test
+|  |  \- net.minidev:json-smart:jar:2.4.7:test
+|  |     \- net.minidev:accessors-smart:jar:2.4.7:test
+|  |        \- org.ow2.asm:asm:jar:9.1:compile
+|  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:test
+|  |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:test
+|  +- org.assertj:assertj-core:jar:3.19.0:test
+|  +- org.hamcrest:hamcrest:jar:2.2:test
+|  +- org.junit.jupiter:junit-jupiter:jar:5.7.2:test
+|  |  +- org.junit.jupiter:junit-jupiter-api:jar:5.7.2:test
+|  |  |  +- org.apiguardian:apiguardian-api:jar:1.1.0:test
+|  |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
+|  |  |  \- org.junit.platform:junit-platform-commons:jar:1.7.2:test
+|  |  +- org.junit.jupiter:junit-jupiter-params:jar:5.7.2:test
+|  |  \- org.junit.jupiter:junit-jupiter-engine:jar:5.7.2:test
+|  |     \- org.junit.platform:junit-platform-engine:jar:1.7.2:test
+|  +- org.mockito:mockito-core:jar:3.9.0:test
+|  |  +- net.bytebuddy:byte-buddy:jar:1.10.22:test
+|  |  +- net.bytebuddy:byte-buddy-agent:jar:1.10.22:test
+|  |  \- org.objenesis:objenesis:jar:3.2:compile
+|  +- org.mockito:mockito-junit-jupiter:jar:3.9.0:test
+|  +- org.skyscreamer:jsonassert:jar:1.5.0:test
+|  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
+|  +- org.springframework:spring-core:jar:5.3.9:compile
+|  |  \- org.springframework:spring-jcl:jar:5.3.9:compile
+|  +- org.springframework:spring-test:jar:5.3.9:test
+|  \- org.xmlunit:xmlunit-core:jar:2.8.2:test
++- backtype:dfs-datastores-cascading:jar:1.2.0:compile
+|  +- backtype:dfs-datastores:jar:1.1.0:compile
+|  |  \- jvyaml:jvyaml:jar:1.0.0:compile
+|  \- cascading:cascading-hadoop:jar:2.0.0:compile
+|     \- cascading:cascading-core:jar:2.0.0:compile
+|        +- riffle:riffle:jar:0.1-dev:compile
+|        \- thirdparty:jgrapht-jdk1.6:jar:0.8.1:compile
++- cascalog:cascalog:jar:1.10.0:compile
+|  +- org.clojure:tools.macro:jar:0.1.1:compile
+|  +- cascading.kryo:cascading.kryo:jar:0.4.0:compile
+|  |  \- com.esotericsoftware.kryo:kryo:jar:2.16:compile
+|  |     +- com.esotericsoftware.reflectasm:reflectasm:jar:shaded:1.06:compile
+|  |     \- com.esotericsoftware.minlog:minlog:jar:1.2:compile
+|  +- cascalog:carbonite:jar:1.3.0:compile
+|  |  \- com.twitter:meat-locker:jar:0.3.0:compile
+|  +- hadoop-util:hadoop-util:jar:0.2.8:compile
+|  +- com.twitter:maple:jar:0.2.0:compile
+|  +- jackknife:jackknife:jar:0.1.2:compile
+|  |  \- org.clojure:tools.logging:jar:0.2.3:compile
+|  \- org.clojure:clojure:jar:1.4.0:compile
++- com.clearspring.analytics:stream:jar:2.7.0:compile
+|  \- it.unimi.dsi:fastutil:jar:6.5.7:compile
++- elephantdb:elephantdb-cascalog:jar:0.4.5:compile
+|  \- elephantdb:elephantdb-cascading:jar:0.4.5:compile
+\- elephantdb:elephantdb-bdb:jar:0.4.5:compile
+   +- elephantdb:elephantdb-core:jar:0.4.5:compile
+   |  +- metrics-clojure:metrics-clojure:jar:1.0.1:compile
+   |  |  \- com.yammer.metrics:metrics-core:jar:2.2.0:compile
+   |  \- elephantdb:elephantdb-thrift:jar:0.4.5:compile
+   \- com.sleepycat:je:jar:5.0.58:compile
