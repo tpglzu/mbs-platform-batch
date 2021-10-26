@@ -1,6 +1,7 @@
 package com.ycu.tang.msbplatform.service;
 
 import backtype.hadoop.pail.Pail;
+import backtype.hadoop.pail.PailStructure;
 import com.ycu.tang.msbplatform.batch.Properties;
 import com.ycu.tang.msbplatform.service.pailstructure.SplitDataPailStructure;
 import com.ycu.tang.msbplatform.batch.thrift.Data;
@@ -46,8 +47,12 @@ public class PailService {
   }
 
   public Pail createPail(String pailName) throws IOException {
+    return createPail(pailName, new SplitDataPailStructure());
+  }
+
+  public Pail createPail(String pailName, PailStructure structure) throws IOException {
     FileSystem fs = new Path(pailName).getFileSystem(getHadoopConf());
-    return Pail.create(getFs(), pailName, new SplitDataPailStructure());
+    return Pail.create(getFs(), pailName, structure);
   }
 
   public Pail getPail(String pailName) throws IOException {

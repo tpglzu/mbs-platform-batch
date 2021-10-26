@@ -1,32 +1,4 @@
 com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-web:jar:2.5.4:compile
-|  +- org.springframework.boot:spring-boot-starter:jar:2.5.4:compile
-|  |  +- org.springframework.boot:spring-boot:jar:2.5.4:compile
-|  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.5.4:compile
-|  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.5.4:compile
-|  |  |  +- ch.qos.logback:logback-classic:jar:1.2.5:compile
-|  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.5:compile
-|  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.14.1:compile
-|  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.14.1:compile
-|  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.32:compile
-|  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
-|  |  \- org.yaml:snakeyaml:jar:1.28:compile
-|  +- org.springframework.boot:spring-boot-starter-json:jar:2.5.4:compile
-|  |  +- com.fasterxml.jackson.core:jackson-databind:jar:2.12.4:compile
-|  |  |  +- com.fasterxml.jackson.core:jackson-annotations:jar:2.12.4:compile
-|  |  |  \- com.fasterxml.jackson.core:jackson-core:jar:2.12.4:compile
-|  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.12.4:compile
-|  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.12.4:compile
-|  |  \- com.fasterxml.jackson.module:jackson-module-parameter-names:jar:2.12.4:compile
-|  +- org.springframework.boot:spring-boot-starter-tomcat:jar:2.5.4:compile
-|  |  +- org.apache.tomcat.embed:tomcat-embed-el:jar:9.0.52:compile
-|  |  \- org.apache.tomcat.embed:tomcat-embed-websocket:jar:9.0.52:compile
-|  +- org.springframework:spring-web:jar:5.3.9:compile
-|  |  \- org.springframework:spring-beans:jar:5.3.9:compile
-|  \- org.springframework:spring-webmvc:jar:5.3.9:compile
-|     +- org.springframework:spring-aop:jar:5.3.9:compile
-|     +- org.springframework:spring-context:jar:5.3.9:compile
-|     \- org.springframework:spring-expression:jar:5.3.9:compile
 +- org.apache.thrift:libthrift:jar:0.14.2:compile
 |  +- org.slf4j:slf4j-api:jar:1.7.32:compile
 |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
@@ -114,6 +86,21 @@ com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
 |  |  \- xml-apis:xml-apis:jar:1.3.04:compile
 |  \- org.fusesource.leveldbjni:leveldbjni-all:jar:1.8:compile
 +- org.springframework.boot:spring-boot-starter-test:jar:2.5.4:test
+|  +- org.springframework.boot:spring-boot-starter:jar:2.5.4:test
+|  |  +- org.springframework.boot:spring-boot:jar:2.5.4:test
+|  |  |  \- org.springframework:spring-context:jar:5.3.9:test
+|  |  |     +- org.springframework:spring-aop:jar:5.3.9:test
+|  |  |     +- org.springframework:spring-beans:jar:5.3.9:test
+|  |  |     \- org.springframework:spring-expression:jar:5.3.9:test
+|  |  +- org.springframework.boot:spring-boot-autoconfigure:jar:2.5.4:test
+|  |  +- org.springframework.boot:spring-boot-starter-logging:jar:2.5.4:test
+|  |  |  +- ch.qos.logback:logback-classic:jar:1.2.5:test
+|  |  |  |  \- ch.qos.logback:logback-core:jar:1.2.5:test
+|  |  |  +- org.apache.logging.log4j:log4j-to-slf4j:jar:2.14.1:test
+|  |  |  |  \- org.apache.logging.log4j:log4j-api:jar:2.14.1:test
+|  |  |  \- org.slf4j:jul-to-slf4j:jar:1.7.32:test
+|  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:test
+|  |  \- org.yaml:snakeyaml:jar:1.28:compile
 |  +- org.springframework.boot:spring-boot-test:jar:2.5.4:test
 |  +- org.springframework.boot:spring-boot-test-autoconfigure:jar:2.5.4:test
 |  +- com.jayway.jsonpath:json-path:jar:2.5.0:test
@@ -139,13 +126,11 @@ com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
 |  +- org.mockito:mockito-junit-jupiter:jar:3.9.0:test
 |  +- org.skyscreamer:jsonassert:jar:1.5.0:test
 |  |  \- com.vaadin.external.google:android-json:jar:0.0.20131108.vaadin1:test
-|  +- org.springframework:spring-core:jar:5.3.9:compile
-|  |  \- org.springframework:spring-jcl:jar:5.3.9:compile
+|  +- org.springframework:spring-core:jar:5.3.9:test
+|  |  \- org.springframework:spring-jcl:jar:5.3.9:test
 |  +- org.springframework:spring-test:jar:5.3.9:test
 |  \- org.xmlunit:xmlunit-core:jar:2.8.2:test
-+- backtype:dfs-datastores-cascading:jar:1.2.0:compile
-|  \- backtype:dfs-datastores:jar:1.1.0:compile
-|     \- jvyaml:jvyaml:jar:1.0.0:compile
++- jvyaml:jvyaml:jar:1.0.0:compile
 +- riffle:riffle:jar:0.1-dev:compile
 +- thirdparty:jgrapht-jdk1.6:jar:0.8.1:compile
 +- org.codehaus.janino:janino:jar:2.5.16:compile
@@ -166,9 +151,12 @@ com.ycu.tang.msb-platform:batch:jar:0.0.1-SNAPSHOT
 |  \- it.unimi.dsi:fastutil:jar:6.5.7:compile
 +- elephantdb:elephantdb-cascalog:jar:0.4.5:compile
 |  \- elephantdb:elephantdb-cascading:jar:0.4.5:compile
-\- elephantdb:elephantdb-bdb:jar:0.4.5:compile
-   +- elephantdb:elephantdb-core:jar:0.4.5:compile
-   |  +- metrics-clojure:metrics-clojure:jar:1.0.1:compile
-   |  |  \- com.yammer.metrics:metrics-core:jar:2.2.0:compile
-   |  \- elephantdb:elephantdb-thrift:jar:0.4.5:compile
-   \- com.sleepycat:je:jar:5.0.58:compile
++- elephantdb:elephantdb-bdb:jar:0.4.5:compile
+|  +- elephantdb:elephantdb-core:jar:0.4.5:compile
+|  |  +- metrics-clojure:metrics-clojure:jar:1.0.1:compile
+|  |  |  \- com.yammer.metrics:metrics-core:jar:2.2.0:compile
+|  |  \- elephantdb:elephantdb-thrift:jar:0.4.5:compile
+|  \- com.sleepycat:je:jar:5.0.58:compile
+\- backtype:cascading-thrift:jar:0.2.3:compile
+   \- cascading:cascading-hadoop:jar:2.0.0-wip-259:compile
+      \- cascading:cascading-core:jar:2.0.0-wip-259:compile

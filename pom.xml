@@ -12,6 +12,7 @@
 	<artifactId>batch</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>batch</name>
+	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot</description>
 
 	<repositories>
@@ -70,20 +71,27 @@
 			<scope>test</scope>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>backtype</groupId>-->
+<!--			<artifactId>dfs-datastores-cascading</artifactId>-->
+<!--			<version>1.2.0</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>cascading</groupId>-->
+<!--					<artifactId>cascading-hadoop</artifactId>-->
+<!--				</exclusion>-->
+<!--				<exclusion>-->
+<!--					<groupId>cascading</groupId>-->
+<!--					<artifactId>cascading-core</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
+<!--		</dependency>-->
+
+		<!-- https://mvnrepository.com/artifact/jvyaml/jvyaml -->
 		<dependency>
-			<groupId>backtype</groupId>
-			<artifactId>dfs-datastores-cascading</artifactId>
-			<version>1.2.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>cascading</groupId>
-					<artifactId>cascading-hadoop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>cascading</groupId>
-					<artifactId>cascading-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>jvyaml</groupId>
+			<artifactId>jvyaml</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -158,8 +166,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-	</dependencies>
 
+		<dependency>
+			<groupId>backtype</groupId>
+			<artifactId>cascading-thrift</artifactId>
+			<version>0.2.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>libthrift</artifactId>
+					<groupId>org.apache.thrift</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

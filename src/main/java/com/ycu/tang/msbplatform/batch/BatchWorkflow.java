@@ -83,14 +83,15 @@ public class BatchWorkflow {
     }
 
     public void initTestData() throws Exception {
-        FileSystem fs = FileSystem.get(new Configuration());
+        FileSystem fs = pailService.getFs();
         fs.delete(new Path(DATA_ROOT), true);
         fs.delete(new Path(OUTPUTS_ROOT), true);
+        fs.delete(new Path(NEW_ROOT), true);
         fs.mkdirs(new Path(DATA_ROOT));
         fs.mkdirs(new Path(OUTPUTS_ROOT + "edb"));
 
-        Pail masterPail = Pail.create(MASTER_ROOT, (PailStructure)new SplitDataPailStructure());
-        Pail<Data> newPail = Pail.create(NEW_ROOT, (PailStructure)new DataPailStructure());
+//        Pail masterPail = Pail.create(MASTER_ROOT, (PailStructure)new SplitDataPailStructure());
+        Pail<Data> newPail = pailService.createPail(NEW_ROOT, (PailStructure)new DataPailStructure());
 
         TypedRecordOutputStream os = newPail.openWrite();
         os.writeObject(makePageview(1, "http://foo.com/post1", 60));
@@ -183,7 +184,7 @@ public class BatchWorkflow {
             sink,
             new Subquery("?data")
                 .predicate(reduced, "_", "?data"));
-        Pail shreddedPail = new Pail("/tmp/swa/shredded");
+        Pail shreddedPail = pailService.getPail("/tmp/swa/shredded");
         shreddedPail.consolidate();
         return shreddedPail;
     }
@@ -692,9 +693,10 @@ public class BatchWorkflow {
                         "!!newId", "?data").out("?normalized-pageview"));
     }
 
-    public void run() throws IOException {
+    public void run() throws Exception {
         init();
         setApplicationConf();
+        initTestData();
 
         Pail masterPail = pailService.getPail(MASTER_ROOT);
         Pail newDataPail = pailService.getPail(NEW_ROOT);

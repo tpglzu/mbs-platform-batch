@@ -155,8 +155,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:5.3.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.xmlunit:xmlunit-core:2.8.2" level="project" />
-    <orderEntry type="library" name="Maven: backtype:dfs-datastores-cascading:1.2.0" level="project" />
-    <orderEntry type="library" name="Maven: backtype:dfs-datastores:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: jvyaml:jvyaml:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: riffle:riffle:0.1-dev" level="project" />
     <orderEntry type="library" name="Maven: thirdparty:jgrapht-jdk1.6:0.8.1" level="project" />
@@ -184,5 +182,8 @@
     <orderEntry type="library" name="Maven: com.yammer.metrics:metrics-core:2.2.0" level="project" />
     <orderEntry type="library" name="Maven: elephantdb:elephantdb-thrift:0.4.5" level="project" />
     <orderEntry type="library" name="Maven: com.sleepycat:je:5.0.58" level="project" />
+    <orderEntry type="library" name="Maven: backtype:cascading-thrift:0.2.3" level="project" />
+    <orderEntry type="library" name="Maven: cascading:cascading-hadoop:2.0.0-wip-259" level="project" />
+    <orderEntry type="library" name="Maven: cascading:cascading-core:2.0.0-wip-259" level="project" />
   </component>
 </module>

@@ -69,8 +69,8 @@ public class MultiInputFormat implements InputFormat
       configs.add( HadoopUtil.getConfig( toJob, fromJob ) );
       Collections.addAll( allPaths, FileInputFormat.getInputPaths( fromJob ) );
 
-      if( !isLocal )
-        isLocal = fromJob.get( "mapred.job.tracker" ).equalsIgnoreCase( "local" );
+//      if( !isLocal )
+//        isLocal = fromJob.get( "mapred.job.tracker" ).equalsIgnoreCase( "local" );
       }
 
     if( !allPaths.isEmpty() ) // it's possible there aren't any
