@@ -185,5 +185,6 @@
     <orderEntry type="library" name="Maven: backtype:cascading-thrift:0.2.3" level="project" />
     <orderEntry type="library" name="Maven: cascading:cascading-hadoop:2.0.0-wip-259" level="project" />
     <orderEntry type="library" name="Maven: cascading:cascading-core:2.0.0-wip-259" level="project" />
+    <orderEntry type="library" name="Maven: org.mongodb:mongo-hadoop-streaming:1.1.0-SNAPSHOT" level="project" />
   </component>
 </module>

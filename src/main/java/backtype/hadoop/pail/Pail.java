@@ -601,7 +601,7 @@ public class Pail<T> extends AbstractPail implements Iterable<T>{
         while(full.size()>0 && full.get(0).startsWith("_")) {
             full.remove(0);
         }
-        if(!getSpec().getStructure().isValidTarget(full.toArray(new String[full.size()]))) {
+        if(!getSpec().getStructure().isValidTarget(userfilename.split("/"))) {
             throw new IllegalArgumentException(
                     userfilename + " is not valid with the pail structure " + getSpec().toString() +
                     " --> " + full.toString());

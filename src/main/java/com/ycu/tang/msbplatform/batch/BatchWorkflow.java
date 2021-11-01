@@ -6,26 +6,19 @@ import backtype.hadoop.pail.Pail;
 import backtype.hadoop.pail.Pail.TypedRecordOutputStream;
 import backtype.hadoop.pail.PailSpec;
 import backtype.hadoop.pail.PailStructure;
-import cascading.flow.FlowProcess;
 import cascading.flow.hadoop.HadoopFlowProcess;
-import cascading.operation.BufferCall;
-import cascading.operation.FunctionCall;
 import cascading.scheme.hadoop.SequenceFile;
 import cascading.tap.Tap;
 import cascading.tap.hadoop.Hfs;
-import cascading.tuple.Tuple;
-import cascading.tuple.TupleEntry;
-import cascalog.CascalogBuffer;
-import cascalog.CascalogFunction;
 import cascalog.ops.IdentityBuffer;
 import cascalog.ops.RandLong;
-import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
-import com.clearspring.analytics.stream.cardinality.HyperLogLog;
+import com.clojurewerkz.cascading.mongodb.MongoDBScheme;
+import com.clojurewerkz.cascading.mongodb.MongoDBTap;
+import com.ycu.tang.msbplatform.batch.function.*;
 import com.ycu.tang.msbplatform.service.PailService;
 import elephantdb.DomainSpec;
 import elephantdb.jcascalog.EDB;
 import elephantdb.partition.HashModScheme;
-import elephantdb.partition.ShardingScheme;
 import elephantdb.persistence.JavaBerkDB;
 import jcascalog.Api;
 import jcascalog.Fields;
@@ -34,16 +27,11 @@ import jcascalog.Subquery;
 import jcascalog.op.Count;
 import jcascalog.op.Sum;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.ByteBuffer;
 import java.util.*;
 
 import com.ycu.tang.msbplatform.service.pailstructure.DataPailStructure;
@@ -124,13 +112,13 @@ public class BatchWorkflow {
             String path,
             final DataUnit._Fields... fields) {
         PailTapOptions opts = new PailTapOptions();
-        opts.attrs = new List[] {
-                        new ArrayList<String>() {{
-                           for(DataUnit._Fields field: fields) {
-                               add("" + field.getThriftFieldId());
-                           }
-                        }}
-                        };
+
+        List list = new ArrayList();
+        for(DataUnit._Fields field: fields) {
+            list.add("" + field.getThriftFieldId());
+        }
+
+        opts.attrs = new List[] {list};
         opts.spec = new PailSpec(
                       (PailStructure) new SplitDataPailStructure());
 
@@ -189,35 +177,6 @@ public class BatchWorkflow {
         return shreddedPail;
     }
 
-    public class NormalizeURL extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            Data data = ((Data) call.getArguments()
-                          .getObject(0)).deepCopy();
-            DataUnit du = data.getDataunit();
-
-            if(du.getSetField() == DataUnit._Fields.PAGE_VIEW) {
-                normalize(du.getPage_view().getPage());
-            } else if(du.getSetField() ==
-                      DataUnit._Fields.PAGE_PROPERTY) {
-                normalize(du.getPage_property().getId());
-            }
-            call.getOutputCollector().add(new Tuple(data));
-        }
-
-        private void normalize(PageID page) {
-            if(page.getSetField() == PageID._Fields.URL) {
-                String urlStr = page.getUrl();
-                try {
-                    URL url = new URL(urlStr);
-                    page.setUrl(url.getProtocol() + "://" +
-                            url.getHost() + url.getPath());
-                } catch(MalformedURLException e) {
-                }
-            }
-        }
-
-    }
-
     public void normalizeURLs() {
         Tap masterDataset = splitDataTap(DATA_ROOT + "master");
         Tap outTap = splitDataTap("/tmp/swa/normalized_urls");
@@ -241,55 +200,6 @@ public class BatchWorkflow {
                   .predicate(Option.DISTINCT, true));
     }
 
-    public class ToHourBucket extends CascalogFunction {
-        private static final int HOUR_SECS = 60 * 60;
-
-        public void operate(FlowProcess process, FunctionCall call) {
-            int timestamp = call.getArguments().getInteger(0);
-            int hourBucket = timestamp / HOUR_SECS;
-            call.getOutputCollector().add(new Tuple(hourBucket));
-        }
-    }
-
-    public class ExtractPageViewFields
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            Data data = (Data) call.getArguments().getObject(0);
-            PageViewEdge pageview = data.getDataunit()
-                                        .getPage_view();
-            if(pageview.getPage().getSetField() ==
-               PageID._Fields.URL) {
-                call.getOutputCollector().add(new Tuple(
-                        pageview.getPage().getUrl(),
-                        pageview.getPerson(),
-                        data.getPedigree().getTrue_as_of_secs()
-                        ));
-            }
-        }
-    }
-
-    public class EmitGranularities extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            int hourBucket = call.getArguments().getInteger(0);
-            int dayBucket = hourBucket / 24;
-            int weekBucket = dayBucket / 7;
-            int monthBucket = dayBucket / 28;
-
-            call.getOutputCollector().add(new Tuple("h", hourBucket));
-            call.getOutputCollector().add(new Tuple("d", dayBucket));
-            call.getOutputCollector().add(new Tuple("w", weekBucket));
-            call.getOutputCollector().add(new Tuple("m",
-                                                    monthBucket));
-        }
-    }
-
-    public class Debug extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            System.out.println("DEBUG: " + call.getArguments().toString());
-            call.getOutputCollector().add(new Tuple(1));
-        }
-    }
-
     public Subquery pageviewBatchView() {
         Tap source = splitDataTap("/tmp/swa/unique_pageviews");
 
@@ -310,67 +220,63 @@ public class BatchWorkflow {
             .predicate(new Sum(), "?count").out("?total-pageviews");
     }
 
-    public class ToUrlBucketedKey
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            String url = call.getArguments().getString(0);
-            String gran = call.getArguments().getString(1);
-            Integer bucket = call.getArguments().getInteger(2);
-
-            String keyStr = url + "/" + gran + "-" + bucket;
-            try {
-                call.getOutputCollector().add(
-                    new Tuple(keyStr.getBytes("UTF-8")));
-            } catch(UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public class ToSerializedLong
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            long val = call.getArguments().getLong(0);
-            ByteBuffer buffer = ByteBuffer.allocate(8);
-            buffer.putLong(val);
-            call.getOutputCollector().add(
-                new Tuple(buffer.array()));
-        }
-    }
-
-    private String getUrlFromSerializedKey(byte[] ser) {
-        try {
-            String key = new String(ser, "UTF-8");
-            return key.substring(0, key.lastIndexOf("/"));
-        } catch(UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public class UrlOnlyScheme implements ShardingScheme {
-        public int shardIndex(byte[] shardKey, int shardCount) {
-            String url = getUrlFromSerializedKey(shardKey);
-            return url.hashCode() % shardCount;
-        }
-    }
-
     public void pageviewElephantDB(Subquery pageviewBatchView) {
-        Subquery toEdb =
-            new Subquery("?key", "?value")
-                .predicate(pageviewBatchView,
-                   "?url", "?granularity", "?bucket", "?total-pageviews")
-                .predicate(new ToUrlBucketedKey(),
-                    "?url", "?granularity", "?bucket")
-                    .out("?key")
-                .predicate(new ToSerializedLong(), "?total-pageviews")
-                    .out("?value");
+//        Subquery toEdb =
+//            new Subquery("?key", "?value")
+//                .predicate(pageviewBatchView,
+//                   "?url", "?granularity", "?bucket", "?total-pageviews")
+//                .predicate(new ToUrlBucketedKey(),
+//                    "?url", "?granularity", "?bucket")
+//                    .out("?key")
+//                .predicate(new ToSerializedLong(), "?total-pageviews")
+//                    .out("?value");
 
-        Api.execute(EDB.makeKeyValTap(
-                        OUTPUTS_ROOT + "edb/pageviews",
-                        new DomainSpec(new JavaBerkDB(),
-                                       new UrlOnlyScheme(),
-                                       32)),
+        Subquery toEdb =
+                new Subquery("?key", "?value", "?url", "?granularity", "?bucket")
+                        .predicate(pageviewBatchView,
+                                "?url", "?granularity", "?bucket", "?value")
+                        .predicate(new ToUrlBucketedKey(),
+                                "?url", "?granularity", "?bucket")
+                        .out("?key");
+
+
+        // List of columns to be fetched from Mongo
+        List<String> columns = new ArrayList<String>();
+        columns.add("key");
+        columns.add("value");
+        columns.add("url");
+        columns.add("granularity");
+        columns.add("bucket");
+
+        // When writing back to mongodb, you may have Cascading output tuple item names
+        // a bit different from your Mongodb ColumnFamily definition. Otherwise, you can
+        // simply specify both key and value same.
+        Map<String, String> mappings = new HashMap<String, String>();
+        mappings.put("key", "?key");
+        mappings.put("value", "?value");
+        mappings.put("url", "?url");
+        mappings.put("granularity", "?granularity");
+        mappings.put("bucket", "?bucket");
+
+        MongoDBScheme scheme = new MongoDBScheme("localhost",
+                27017,
+                "batch-view",
+                "page-view",
+                "key",
+                columns,
+                mappings);
+
+        MongoDBTap tap = new MongoDBTap(scheme);
+
+        Api.execute(tap,
                     toEdb);
+
+//        Api.execute(EDB.makeKeyValTap(
+//                        OUTPUTS_ROOT + "edb/pageviews",
+//                        new DomainSpec(new JavaBerkDB(),
+//                                       new UrlOnlyScheme(),
+//                                       32)),
+//                    toEdb);
     }
 
     public void uniquesElephantDB(Subquery uniquesView) {
@@ -382,38 +288,15 @@ public class BatchWorkflow {
                     "?url", "?granularity", "?bucket")
                     .out("?key");
 
+
+
+
         Api.execute(EDB.makeKeyValTap(
                         OUTPUTS_ROOT + "edb/uniques",
                         new DomainSpec(new JavaBerkDB(),
                                        new UrlOnlyScheme(),
                                        32)),
                     toEdb);
-    }
-
-    public class ToSerializedString
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            String str = call.getArguments().getString(0);
-
-            try {
-                call.getOutputCollector().add(
-                    new Tuple(str.getBytes("UTF-8")));
-            } catch(UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public class ToSerializedLongPair
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            long l1 = call.getArguments().getLong(0);
-            long l2 = call.getArguments().getLong(1);
-            ByteBuffer buffer = ByteBuffer.allocate(16);
-            buffer.putLong(l1);
-            buffer.putLong(l2);
-            call.getOutputCollector().add(new Tuple(buffer.array()));
-        }
     }
 
     public void bounceRateElephantDB(Subquery bounceView) {
@@ -432,49 +315,6 @@ public class BatchWorkflow {
                                        new HashModScheme(),
                                        32)),
                     toEdb);
-    }
-
-    public class ConstructHyperLogLog extends CascalogBuffer {
-        public void operate(FlowProcess process, BufferCall call) {
-            HyperLogLog hll = new HyperLogLog(14);
-            Iterator<TupleEntry> it = call.getArgumentsIterator();
-            while(it.hasNext()) {
-                TupleEntry tuple = it.next();
-                hll.offer(tuple.getObject(0));
-            }
-            try {
-                call.getOutputCollector().add(
-                    new Tuple(hll.getBytes()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public class MergeHyperLogLog extends CascalogBuffer {
-        public void operate(FlowProcess process, BufferCall call) {
-            Iterator<TupleEntry> it = call.getArgumentsIterator();
-            HyperLogLog curr = null;
-            try {
-                while(it.hasNext()) {
-                    TupleEntry tuple = it.next();
-                    byte[] serialized = (byte[]) tuple.getObject(0);
-                    HyperLogLog hll = HyperLogLog.Builder.build(
-                                          serialized);
-                    if(curr==null) {
-                        curr = hll;
-                    } else {
-                        curr = (HyperLogLog) curr.merge(hll);
-                    }
-                }
-                call.getOutputCollector().add(
-                    new Tuple(curr.getBytes()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch(CardinalityMergeException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public Subquery uniquesView() {
@@ -501,47 +341,6 @@ public class BatchWorkflow {
                 .out("?aggregate-hll");
     }
 
-    public class ExtractDomain extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            String urlStr = call.getArguments().getString(0);
-            try {
-                URL url = new URL(urlStr);
-                call.getOutputCollector().add(
-                    new Tuple(url.getAuthority()));
-            } catch(MalformedURLException e) {
-            }
-        }
-    }
-
-    public class AnalyzeVisits extends CascalogBuffer {
-        private static final int VISIT_LENGTH_SECS = 60 * 15;
-
-        public void operate(FlowProcess process, BufferCall call) {
-            Iterator<TupleEntry> it = call.getArgumentsIterator();
-            int bounces = 0;
-            int visits = 0;
-            Integer lastTime = null;
-            int numInCurrVisit = 0;
-            while(it.hasNext()) {
-                TupleEntry tuple = it.next();
-                int timeSecs = tuple.getInteger(0);
-                if(lastTime == null ||
-                        (timeSecs - lastTime) > VISIT_LENGTH_SECS) {
-                    visits++;
-                    if(numInCurrVisit == 1) {
-                        bounces++;
-                    }
-                    numInCurrVisit = 0;
-                }
-                numInCurrVisit++;
-            }
-            if(numInCurrVisit==1) {
-                bounces++;
-            }
-            call.getOutputCollector().add(new Tuple(visits, bounces));
-        }
-    }
-
     public Subquery bouncesView() {
         Tap source = splitDataTap("/tmp/swa/unique_pageviews");
 
@@ -565,66 +364,6 @@ public class BatchWorkflow {
                 .out("?num-visits")
             .predicate(new Sum(), "?num-user-bounces")
                 .out("?num-bounces");
-    }
-
-    public class EdgifyEquiv extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            Data data = (Data) call.getArguments().getObject(0);
-            EquivEdge equiv = data.getDataunit().getEquiv();
-            call.getOutputCollector().add(
-                    new Tuple(equiv.getId1(), equiv.getId2()));
-        }
-    }
-
-    public class BidirectionalEdge extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            Object node1 = call.getArguments().getObject(0);
-            Object node2 = call.getArguments().getObject(1);
-            if(!node1.equals(node2)) {
-                call.getOutputCollector().add(
-                    new Tuple(node1, node2));
-                call.getOutputCollector().add(
-                    new Tuple(node2, node1));
-            }
-        }
-    }
-
-    public class IterateEdges extends CascalogBuffer {
-        public void operate(FlowProcess process, BufferCall call) {
-            PersonID grouped = (PersonID) call.getGroup()
-                                              .getObject(0);
-            TreeSet<PersonID> allIds = new TreeSet<PersonID>();
-            allIds.add(grouped);
-
-            Iterator<TupleEntry> it = call.getArgumentsIterator();
-            while(it.hasNext()) {
-                allIds.add((PersonID) it.next().getObject(0));
-            }
-
-            Iterator<PersonID> allIdsIt = allIds.iterator();
-            PersonID smallest = allIdsIt.next();
-            boolean isProgress = allIds.size() > 2 &&
-                                 !grouped.equals(smallest);
-            while(allIdsIt.hasNext()) {
-                PersonID id = allIdsIt.next();
-                call.getOutputCollector().add(
-                        new Tuple(smallest, id, isProgress));
-            }
-        }
-    }
-
-    public class MakeNormalizedPageview
-        extends CascalogFunction {
-        public void operate(FlowProcess process, FunctionCall call) {
-            PersonID newId = (PersonID) call.getArguments()
-                                            .getObject(0);
-            Data data = ((Data) call.getArguments().getObject(1))
-                                                   .deepCopy();
-            if(newId!=null) {
-                data.getDataunit().getPage_view().setPerson(newId);
-            }
-            call.getOutputCollector().add(new Tuple(data));
-        }
     }
 
     public Tap runUserIdNormalizationIteration(int i) {
@@ -702,10 +441,11 @@ public class BatchWorkflow {
         Pail newDataPail = pailService.getPail(NEW_ROOT);
 
         ingest(masterPail, newDataPail);
-//        normalizeURLs();
-//        normalizeUserIds();
-//        deduplicatePageviews();
-//        pageviewElephantDB(pageviewBatchView());
+        normalizeURLs();
+        normalizeUserIds();
+        deduplicatePageviews();
+
+        pageviewElephantDB(pageviewBatchView());
 //        uniquesElephantDB(uniquesView());
 //        bounceRateElephantDB(bouncesView());
     }
