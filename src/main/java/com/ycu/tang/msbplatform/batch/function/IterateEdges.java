@@ -21,7 +21,6 @@ public class IterateEdges extends CascalogBuffer {
     while (it.hasNext()) {
       PersonID personID = (PersonID) it.next().getObject(0);
       allIds.add(personID);
-      System.out.println("[before]grouped : " + grouped + ", id : " + personID);
     }
     Iterator<PersonID> allIdsIt = allIds.iterator();
     PersonID smallest = allIdsIt.next();
@@ -29,8 +28,6 @@ public class IterateEdges extends CascalogBuffer {
             !grouped.equals(smallest);
     while (allIdsIt.hasNext()) {
       PersonID id = allIdsIt.next();
-      System.out.println("[after]smallest : " + smallest + ", id : " + id);
-      System.out.println("[after]isProgress : " + isProgress);
       call.getOutputCollector().add(
               new Tuple(smallest, id, isProgress));
     }

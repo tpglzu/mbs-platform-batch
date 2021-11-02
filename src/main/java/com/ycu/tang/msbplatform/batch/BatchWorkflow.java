@@ -122,7 +122,7 @@ public class BatchWorkflow {
         opts.spec = new PailSpec(
                       (PailStructure) new SplitDataPailStructure());
 
-        return new PailTap(path, opts);
+        return new PailTap(properties.getNamenodeUrl() + path, opts);
     }
 
     public PailTap splitDataTap(String path) {
@@ -220,18 +220,9 @@ public class BatchWorkflow {
             .predicate(new Sum(), "?count").out("?total-pageviews");
     }
 
-    public void pageviewElephantDB(Subquery pageviewBatchView) {
-//        Subquery toEdb =
-//            new Subquery("?key", "?value")
-//                .predicate(pageviewBatchView,
-//                   "?url", "?granularity", "?bucket", "?total-pageviews")
-//                .predicate(new ToUrlBucketedKey(),
-//                    "?url", "?granularity", "?bucket")
-//                    .out("?key")
-//                .predicate(new ToSerializedLong(), "?total-pageviews")
-//                    .out("?value");
 
-        Subquery toEdb =
+    public void pageviewMongoDB(Subquery pageviewBatchView) {
+        Subquery toMongoDB =
                 new Subquery("?key", "?value", "?url", "?granularity", "?bucket")
                         .predicate(pageviewBatchView,
                                 "?url", "?granularity", "?bucket", "?value")
@@ -258,9 +249,9 @@ public class BatchWorkflow {
         mappings.put("granularity", "?granularity");
         mappings.put("bucket", "?bucket");
 
-        MongoDBScheme scheme = new MongoDBScheme("localhost",
-                27017,
-                "batch-view",
+        MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
+                properties.getDbPort(),
+                properties.getDbName(),
                 "page-view",
                 "key",
                 columns,
@@ -268,35 +259,123 @@ public class BatchWorkflow {
 
         MongoDBTap tap = new MongoDBTap(scheme);
 
-        Api.execute(tap,
-                    toEdb);
+        Api.execute(tap, toMongoDB);
+    }
 
-//        Api.execute(EDB.makeKeyValTap(
-//                        OUTPUTS_ROOT + "edb/pageviews",
-//                        new DomainSpec(new JavaBerkDB(),
-//                                       new UrlOnlyScheme(),
-//                                       32)),
-//                    toEdb);
+    public void uniquesMongoDB(Subquery uniquesView) {
+        Subquery toMongoDB =
+                new Subquery("?key", "?value", "?url", "?granularity", "?bucket")
+                        .predicate(uniquesView,
+                                "?url", "?granularity", "?bucket", "?value")
+                        .predicate(new ToUrlBucketedKey(),
+                                "?url", "?granularity", "?bucket")
+                        .out("?key");
+
+        // List of columns to be fetched from Mongo
+        List<String> columns = new ArrayList<String>();
+        columns.add("key");
+        columns.add("value");
+        columns.add("url");
+        columns.add("granularity");
+        columns.add("bucket");
+
+        // When writing back to mongodb, you may have Cascading output tuple item names
+        // a bit different from your Mongodb ColumnFamily definition. Otherwise, you can
+        // simply specify both key and value same.
+        Map<String, String> mappings = new HashMap<String, String>();
+        mappings.put("key", "?key");
+        mappings.put("value", "?value");
+        mappings.put("url", "?url");
+        mappings.put("granularity", "?granularity");
+        mappings.put("bucket", "?bucket");
+
+        MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
+                properties.getDbPort(),
+                properties.getDbName(),
+                "unique-view",
+                "key",
+                columns,
+                mappings);
+
+        MongoDBTap tap = new MongoDBTap(scheme);
+
+        Api.execute(tap, toMongoDB);
+    }
+
+    public void bounceRateMongoDB(Subquery bounceView) {
+        Subquery toMongoDB =
+                new Subquery("?key", "?domain", "?bounces", "?total", "?rate")
+                        .predicate(bounceView,
+                                "?domain", "?bounces", "?total")
+                        .predicate(new ToSerializedString(),
+                                "?domain").out("?key")
+                        .predicate(new ToBounceRate(), "?bounces", "?total").out("?rate");
+
+        // List of columns to be fetched from Mongo
+        List<String> columns = new ArrayList<String>();
+        columns.add("key");
+        columns.add("domain");
+        columns.add("bounces");
+        columns.add("total");
+        columns.add("rate");
+
+        // When writing back to mongodb, you may have Cascading output tuple item names
+        // a bit different from your Mongodb ColumnFamily definition. Otherwise, you can
+        // simply specify both key and value same.
+        Map<String, String> mappings = new HashMap<String, String>();
+        mappings.put("key", "?key");
+        mappings.put("domain", "?domain");
+        mappings.put("bounces", "?bounces");
+        mappings.put("total", "?total");
+        mappings.put("rate", "?rate");
+
+        MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
+                properties.getDbPort(),
+                properties.getDbName(),
+                "bounce-view",
+                "key",
+                columns,
+                mappings);
+
+        MongoDBTap tap = new MongoDBTap(scheme);
+
+        Api.execute(tap, toMongoDB);
+    }
+
+    public void pageviewElephantDB(Subquery pageviewBatchView) {
+        Subquery toEdb =
+                new Subquery("?key", "?value")
+                        .predicate(pageviewBatchView,
+                                "?url", "?granularity", "?bucket", "?total-pageviews")
+                        .predicate(new ToUrlBucketedKey(),
+                                "?url", "?granularity", "?bucket")
+                        .out("?key")
+                        .predicate(new ToSerializedLong(), "?total-pageviews")
+                        .out("?value");
+        Api.execute(EDB.makeKeyValTap(
+                OUTPUTS_ROOT + "edb/pageviews",
+                new DomainSpec(new JavaBerkDB(),
+                        new UrlOnlyScheme(),
+                        32)),
+                toEdb);
     }
 
     public void uniquesElephantDB(Subquery uniquesView) {
         Subquery toEdb =
-            new Subquery("?key", "?value")
-                .predicate(uniquesView,
-                   "?url", "?granularity", "?bucket", "?value")
-                .predicate(new ToUrlBucketedKey(),
-                    "?url", "?granularity", "?bucket")
-                    .out("?key");
-
-
+                new Subquery("?key", "?value")
+                        .predicate(uniquesView,
+                                "?url", "?granularity", "?bucket", "?value")
+                        .predicate(new ToUrlBucketedKey(),
+                                "?url", "?granularity", "?bucket")
+                        .out("?key");
 
 
         Api.execute(EDB.makeKeyValTap(
-                        OUTPUTS_ROOT + "edb/uniques",
-                        new DomainSpec(new JavaBerkDB(),
-                                       new UrlOnlyScheme(),
-                                       32)),
-                    toEdb);
+                OUTPUTS_ROOT + "edb/uniques",
+                new DomainSpec(new JavaBerkDB(),
+                        new UrlOnlyScheme(),
+                        32)),
+                toEdb);
     }
 
     public void bounceRateElephantDB(Subquery bounceView) {
@@ -368,8 +447,8 @@ public class BatchWorkflow {
 
     public Tap runUserIdNormalizationIteration(int i) {
         Object source = Api.hfsSeqfile(
-                    "/tmp/swa/equivs" + (i - 1));
-        Object sink = Api.hfsSeqfile("/tmp/swa/equivs" + i);
+                properties.getNamenodeUrl() + "/tmp/swa/equivs" + (i - 1));
+        Object sink = Api.hfsSeqfile(properties.getNamenodeUrl() + "/tmp/swa/equivs" + i);
 
         Object iteration = new Subquery(
                 "?b1", "?node1", "?node2", "?is-new")
@@ -387,7 +466,7 @@ public class BatchWorkflow {
                 .predicate(Option.DISTINCT, true);
 
         Tap progressEdgesSink = new Hfs(new SequenceFile(cascading.tuple.Fields.ALL),
-                            "/tmp/swa/equivs" + i + "-new");
+                properties.getNamenodeUrl() + "/tmp/swa/equivs" + i + "-new");
         Subquery progressEdges = new Subquery("?node1", "?node2")
                 .predicate(iteration, "?node1", "?node2", true);
 
@@ -399,7 +478,7 @@ public class BatchWorkflow {
     public void normalizeUserIds() throws IOException {
         Tap equivs = attributeTap("/tmp/swa/normalized_urls",
                                   DataUnit._Fields.EQUIV);
-        Api.execute(Api.hfsSeqfile("/tmp/swa/equivs0"),
+        Api.execute(Api.hfsSeqfile(properties.getNamenodeUrl() + "/tmp/swa/equivs0"),
                 new Subquery("?node1", "?node2")
                     .predicate(equivs, "_", "?data")
                     .predicate(new EdgifyEquiv(), "?data")
@@ -418,7 +497,7 @@ public class BatchWorkflow {
 
         Tap pageviews = attributeTap("/tmp/swa/normalized_urls",
                 DataUnit._Fields.PAGE_VIEW);
-        Object newIds = Api.hfsSeqfile("/tmp/swa/equivs" + i);
+        Object newIds = Api.hfsSeqfile(properties.getNamenodeUrl() + "/tmp/swa/equivs" + i);
         Tap result = splitDataTap(
                         "/tmp/swa/normalized_pageview_users");
 
@@ -445,8 +524,8 @@ public class BatchWorkflow {
         normalizeUserIds();
         deduplicatePageviews();
 
-        pageviewElephantDB(pageviewBatchView());
-//        uniquesElephantDB(uniquesView());
-//        bounceRateElephantDB(bouncesView());
+        pageviewMongoDB(pageviewBatchView());
+        uniquesMongoDB(uniquesView());
+        bounceRateMongoDB(bouncesView());
     }
 }

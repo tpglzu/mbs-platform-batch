@@ -26,9 +26,15 @@ public class Properties {
   @Value("${hadoop.pail.path.new.root}")
   private String newRoot;
 
+  @Value("${mongodb.url}")
+  private String dbUrl;
+  @Value("${mongodb.port}")
+  private Integer dbPort;
+  @Value("${mongodb.database}")
+  private String dbName;
+
   public String getNamenodeUrl() {
-//    return namenodeUrl;
-    return "";
+    return namenodeUrl;
   }
 
   public String getRoot() {
@@ -49,5 +55,17 @@ public class Properties {
 
   public String getNewRoot() {
     return newRoot;
+  }
+
+  public String getDbUrl() {
+    return dbUrl;
+  }
+
+  public Integer getDbPort() {
+    return dbPort;
+  }
+
+  public String getDbName() {
+    return dbName;
   }
 }

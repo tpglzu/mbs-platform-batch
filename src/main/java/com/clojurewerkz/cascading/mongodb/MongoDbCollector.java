@@ -106,6 +106,10 @@ public class MongoDbCollector extends TupleEntrySchemeCollector implements Outpu
 
     CascadingMongoOutput output = new CascadingMongoOutput((ObjectId) writableComparable, (BSONObject) writable);
 
-    ((MongoRecordWriter) writer).write(output, output);
+    try {
+      ((MongoRecordWriter) writer).write(output, output);
+    }catch (Exception e){
+      System.out.println(e);
+    }
   }
 }

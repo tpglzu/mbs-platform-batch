@@ -15,6 +15,10 @@
 	<packaging>jar</packaging>
 	<description>Demo project for Spring Boot</description>
 
+	<properties>
+		<resourceDirectory>src/main/resources</resourceDirectory>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>clojars.org</id>
@@ -214,4 +218,32 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>${resourceDirectory}/development</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>${resourceDirectory}/production</directory>
+					</resource>
+				</resources>
+			</build>
+		</profile>
+	</profiles>
 </project>

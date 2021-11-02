@@ -28,7 +28,7 @@ public class MergeHyperLogLog extends CascalogBuffer {
         }
       }
       call.getOutputCollector().add(
-              new Tuple(curr.getBytes()));
+              new Tuple(curr.cardinality()));
     } catch (IOException e) {
       throw new RuntimeException(e);
     } catch (CardinalityMergeException e) {

@@ -25,9 +25,9 @@ public class PailService {
 
   public void writeData(String pailName, Data data) throws IOException {
     Pail pail = null;
-    if(!isPailExists(pailName)){
+    if (!isPailExists(pailName)) {
       pail = createPail(pailName);
-    }else{
+    } else {
       pail = new Pail(getFs(), pailName);
     }
     Pail.TypedRecordOutputStream out = pail.openWrite();
@@ -37,9 +37,9 @@ public class PailService {
 
   public final void writeData(String pailName, List<Data> data) throws IOException {
     Pail pail = null;
-    if(!isPailExists(pailName)){
+    if (!isPailExists(pailName)) {
       pail = createPail(pailName);
-    }else{
+    } else {
       pail = new Pail(getFs(), pailName);
     }
     Pail.TypedRecordOutputStream out = pail.openWrite();
@@ -58,9 +58,9 @@ public class PailService {
 
   public Pail getPail(String pailName) throws IOException {
     Pail pail = null;
-    if(!isPailExists(pailName)){
+    if (!isPailExists(pailName)) {
       pail = createPail(pailName);
-    }else{
+    } else {
       pail = new Pail(getFs(), pailName);
     }
     return pail;
@@ -70,11 +70,12 @@ public class PailService {
     return getFs().exists(new Path(pailName));
   }
 
-  public Configuration getHadoopConf(){
-    if(hadoopConf == null){
+  public Configuration getHadoopConf() {
+    if (hadoopConf == null) {
       hadoopConf = new Configuration();
-      // TODO local
-//      hadoopConf.set("fs.default.name", properties.getNamenodeUrl());
+      if (!properties.getNamenodeUrl().equals("")) {
+        hadoopConf.set("fs.default.name", properties.getNamenodeUrl());
+      }
     }
     return hadoopConf;
   }
