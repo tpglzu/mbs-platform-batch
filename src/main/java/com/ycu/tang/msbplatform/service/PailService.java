@@ -66,6 +66,16 @@ public class PailService {
     return pail;
   }
 
+  public Pail getPail(String pailName, PailStructure structure) throws IOException {
+    Pail pail = null;
+    if (!isPailExists(pailName)) {
+      pail = createPail(pailName, structure);
+    } else {
+      pail = new Pail(getFs(), pailName);
+    }
+    return pail;
+  }
+
   public boolean isPailExists(String pailName) throws IOException {
     return getFs().exists(new Path(pailName));
   }

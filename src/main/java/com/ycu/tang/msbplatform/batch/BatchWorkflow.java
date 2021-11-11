@@ -16,10 +16,6 @@ import com.clojurewerkz.cascading.mongodb.MongoDBScheme;
 import com.clojurewerkz.cascading.mongodb.MongoDBTap;
 import com.ycu.tang.msbplatform.batch.function.*;
 import com.ycu.tang.msbplatform.service.PailService;
-import elephantdb.DomainSpec;
-import elephantdb.jcascalog.EDB;
-import elephantdb.partition.HashModScheme;
-import elephantdb.persistence.JavaBerkDB;
 import jcascalog.Api;
 import jcascalog.Fields;
 import jcascalog.Option;
@@ -252,7 +248,7 @@ public class BatchWorkflow {
         MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
                 properties.getDbPort(),
                 properties.getDbName(),
-                "page-view",
+                "page-view_new",
                 "key",
                 columns,
                 mappings);
@@ -292,7 +288,7 @@ public class BatchWorkflow {
         MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
                 properties.getDbPort(),
                 properties.getDbName(),
-                "unique-view",
+                "unique-view_new",
                 "key",
                 columns,
                 mappings);
@@ -332,7 +328,7 @@ public class BatchWorkflow {
         MongoDBScheme scheme = new MongoDBScheme(properties.getDbUrl(),
                 properties.getDbPort(),
                 properties.getDbName(),
-                "bounce-view",
+                "bounce-view_new",
                 "key",
                 columns,
                 mappings);
@@ -340,60 +336,6 @@ public class BatchWorkflow {
         MongoDBTap tap = new MongoDBTap(scheme);
 
         Api.execute(tap, toMongoDB);
-    }
-
-    public void pageviewElephantDB(Subquery pageviewBatchView) {
-        Subquery toEdb =
-                new Subquery("?key", "?value")
-                        .predicate(pageviewBatchView,
-                                "?url", "?granularity", "?bucket", "?total-pageviews")
-                        .predicate(new ToUrlBucketedKey(),
-                                "?url", "?granularity", "?bucket")
-                        .out("?key")
-                        .predicate(new ToSerializedLong(), "?total-pageviews")
-                        .out("?value");
-        Api.execute(EDB.makeKeyValTap(
-                OUTPUTS_ROOT + "edb/pageviews",
-                new DomainSpec(new JavaBerkDB(),
-                        new UrlOnlyScheme(),
-                        32)),
-                toEdb);
-    }
-
-    public void uniquesElephantDB(Subquery uniquesView) {
-        Subquery toEdb =
-                new Subquery("?key", "?value")
-                        .predicate(uniquesView,
-                                "?url", "?granularity", "?bucket", "?value")
-                        .predicate(new ToUrlBucketedKey(),
-                                "?url", "?granularity", "?bucket")
-                        .out("?key");
-
-
-        Api.execute(EDB.makeKeyValTap(
-                OUTPUTS_ROOT + "edb/uniques",
-                new DomainSpec(new JavaBerkDB(),
-                        new UrlOnlyScheme(),
-                        32)),
-                toEdb);
-    }
-
-    public void bounceRateElephantDB(Subquery bounceView) {
-        Subquery toEdb =
-            new Subquery("?key", "?value")
-                .predicate(bounceView,
-                   "?domain", "?bounces", "?total")
-                .predicate(new ToSerializedString(),
-                    "?domain").out("?key")
-                .predicate(new ToSerializedLongPair(),
-                    "?bounces", "?total").out("?value");
-
-        Api.execute(EDB.makeKeyValTap(
-                        OUTPUTS_ROOT + "edb/bounces",
-                        new DomainSpec(new JavaBerkDB(),
-                                       new HashModScheme(),
-                                       32)),
-                    toEdb);
     }
 
     public Subquery uniquesView() {
@@ -514,10 +456,10 @@ public class BatchWorkflow {
     public void run() throws Exception {
         init();
         setApplicationConf();
-        initTestData();
+//        initTestData();
 
         Pail masterPail = pailService.getPail(MASTER_ROOT);
-        Pail newDataPail = pailService.getPail(NEW_ROOT);
+        Pail newDataPail = pailService.getPail(NEW_ROOT, (PailStructure)new DataPailStructure());
 
         ingest(masterPail, newDataPail);
         normalizeURLs();

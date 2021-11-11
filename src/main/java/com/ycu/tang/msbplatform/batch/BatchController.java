@@ -20,14 +20,24 @@ public class BatchController {
   @Autowired
   protected BatchWorkflow workflow;
 
+  @Autowired
+  protected ViewManager viewManager;
+
   @Scheduled(fixedDelayString = "${job.batch.interval}")
   public void job() {
     try {
       logger.info("job executed start ...");
       workflow.run();
+
+      //TODO
+      Thread.sleep(300000);
+
+      viewManager.replaceBatchView();
+      viewManager.updateSpeedViews();
+      logger.info("job executed success ...");
+
     }catch (Exception e){
       logger.error("job executed failed ...", e);
-
     }
 
   }

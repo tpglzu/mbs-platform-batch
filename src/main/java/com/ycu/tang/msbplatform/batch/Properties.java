@@ -32,6 +32,8 @@ public class Properties {
   private Integer dbPort;
   @Value("${mongodb.database}")
   private String dbName;
+  @Value("${mongodb.database.speed}")
+  private String dbNameSpeed;
 
   public String getNamenodeUrl() {
     return namenodeUrl;
@@ -67,5 +69,9 @@ public class Properties {
 
   public String getDbName() {
     return dbName;
+  }
+
+  public String getDbNameSpeed() {
+    return dbNameSpeed;
   }
 }

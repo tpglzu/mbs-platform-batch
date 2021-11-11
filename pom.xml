@@ -164,18 +164,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>elephantdb</groupId>
-			<artifactId>elephantdb-bdb</artifactId>
-			<version>0.4.5</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>libthrift</artifactId>
-					<groupId>org.apache.thrift</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
 			<groupId>backtype</groupId>
 			<artifactId>cascading-thrift</artifactId>
 			<version>0.2.3</version>
